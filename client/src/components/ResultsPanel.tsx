@@ -49,6 +49,11 @@ export function ResultsPanel() {
   const { result, locations, routes, reorderStop, confirmTrip, loading } = useAppState();
   const [confirming, setConfirming] = useState(false);
   const [confirmMessage, setConfirmMessage] = useState<string | null>(null);
+  // Arrastar-e-soltar pra reordenar paradas — guarda so o indice enquanto
+  // arrasta (a origem real vai no dataTransfer, entao funciona mesmo se o
+  // componente re-renderizar no meio do gesto).
+  const [dragOver, setDragOver] = useState<{ routeId: string; index: number } | null>(null);
+  const [dragging, setDragging] = useState<{ routeId: string; index: number } | null>(null);
 
   if (!result) return null;
 
@@ -127,8 +132,42 @@ export function ResultsPanel() {
           )}
           <ol className="result-stops">
             {route.stops.map((stop, idx) => (
-              <li key={stop.locationId} className="result-stop-row">
-                <span>
+              <li
+                key={stop.locationId}
+                className={[
+                  "result-stop-row",
+                  dragOver?.routeId === route.routeId && dragOver.index === idx ? "is-drag-over" : "",
+                  dragging?.routeId === route.routeId && dragging.index === idx ? "is-dragging" : "",
+                ]
+                  .filter(Boolean)
+                  .join(" ")}
+                draggable={!loading}
+                onDragStart={(e) => {
+                  e.dataTransfer.setData("text/plain", String(idx));
+                  e.dataTransfer.effectAllowed = "move";
+                  setDragging({ routeId: route.routeId, index: idx });
+                }}
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  setDragOver({ routeId: route.routeId, index: idx });
+                }}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  const fromIndex = Number(e.dataTransfer.getData("text/plain"));
+                  setDragOver(null);
+                  if (!Number.isNaN(fromIndex) && fromIndex !== idx) {
+                    reorderStop(route.routeId, fromIndex, idx);
+                  }
+                }}
+                onDragEnd={() => {
+                  setDragging(null);
+                  setDragOver(null);
+                }}
+              >
+                <span className="result-stop-drag-handle" title="Arrastar para reordenar">
+                  ⠿
+                </span>
+                <span className="result-stop-label">
                   {stop.name} ({stop.demand} pax)
                   {stop.etaSeconds !== undefined && <> — {formatClock(stop.etaSeconds)}</>}
                 </span>

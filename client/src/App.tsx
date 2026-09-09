@@ -5,12 +5,10 @@ import { LocationImportForm } from "./components/LocationImportForm";
 import { LocationList } from "./components/LocationList";
 import { RouteForm } from "./components/RouteForm";
 import { RouteList } from "./components/RouteList";
-import { OptimizeButton } from "./components/OptimizeButton";
-import { ResultsPanel } from "./components/ResultsPanel";
+import { OptimizePanel } from "./components/OptimizePanel";
 import { DestinationForm } from "./components/DestinationForm";
 import { DepartureTimeForm } from "./components/DepartureTimeForm";
 import { MapView } from "./components/MapView";
-import { AutoOptimizePanel } from "./components/AutoOptimizePanel";
 import { SettingsPopover } from "./components/SettingsPopover";
 import { TripBoardingPanel } from "./components/TripBoardingPanel";
 import { ReportsPanel } from "./components/ReportsPanel";
@@ -98,11 +96,7 @@ export default function App() {
                 <hr className="divider" style={{ margin: "12px 0" }} />
                 <DepartureTimeForm embedded />
               </div>
-              <div className="section">
-                <OptimizeButton />
-                <ResultsPanel />
-              </div>
-              <AutoOptimizePanel />
+              <OptimizePanel />
             </>
           )}
 
