@@ -110,6 +110,8 @@ function toRouteVehicle(row: {
   speedFactor: number;
   costPerKm: number;
   activeWeekdays: string | null;
+  createdAt: Date;
+  updatedAt: Date;
 }): RouteVehicle {
   return {
     id: row.id,
@@ -126,5 +128,7 @@ function toRouteVehicle(row: {
     speedFactor: row.speedFactor,
     costPerKm: row.costPerKm,
     activeWeekdays: parseWeekdays(row.activeWeekdays),
+    createdAt: row.createdAt.toISOString(),
+    updatedAt: row.updatedAt.toISOString(),
   };
 }

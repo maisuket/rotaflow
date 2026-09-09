@@ -13,3 +13,22 @@ export function formatClock(seconds: number): string {
   const m = Math.floor((wrapped % 3600) / 60);
   return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
 }
+
+/** ISO 8601 -> "DD/MM/AAAA HH:MM" no fuso local do navegador. */
+export function formatDateTime(iso: string): string {
+  const d = new Date(iso);
+  const date = d.toLocaleDateString("pt-BR");
+  const time = d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+  return `${date} ${time}`;
+}
+
+/**
+ * Tooltip com data de cadastro/edição, pra usar como `title` num item de
+ * lista — só aparece ao passar o mouse, não ocupa espaço na tela.
+ */
+export function timestampTitle(entity: { createdAt?: string; updatedAt?: string }): string | undefined {
+  if (!entity.createdAt) return undefined;
+  const created = `Criado em ${formatDateTime(entity.createdAt)}`;
+  if (!entity.updatedAt || entity.updatedAt === entity.createdAt) return created;
+  return `${created}\nAtualizado em ${formatDateTime(entity.updatedAt)}`;
+}

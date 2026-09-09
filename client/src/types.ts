@@ -4,6 +4,9 @@ export interface Location {
   lat: number;
   lng: number;
   demand: number;
+  /** ISO 8601. */
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export type RouteOriginMode = "depot" | "firstPassenger";
@@ -26,6 +29,9 @@ export interface RouteVehicle {
   costPerKm: number;
   /** Dias da semana em que a rota roda (0=domingo..6=sabado). Null = roda todo dia. */
   activeWeekdays: number[] | null;
+  /** ISO 8601. */
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface DirectionsLeg {

@@ -7,6 +7,7 @@ import { ConfirmButton } from "./ConfirmButton";
 import { RouteShapeIcon } from "./RouteShapeIcon";
 import { shapeForRouteIndex } from "../utils/shapes";
 import { VehicleDetailsFields, VehicleDetailsValue } from "./VehicleDetailsFields";
+import { timestampTitle } from "../utils/format";
 
 function EditRouteForm({ route, onDone }: { route: RouteVehicle; onDone: () => void }) {
   const { updateRoute } = useAppState();
@@ -139,7 +140,7 @@ export function RouteList() {
             <EditRouteForm route={route} onDone={() => setEditingId(null)} />
           </li>
         ) : (
-          <li className="list-item" key={route.id}>
+          <li className="list-item" key={route.id} title={timestampTitle(route)}>
             <RouteShapeIcon shape={shapeForRouteIndex(index)} color={colorForRouteIndex(index)} />
             <span className="list-item-main">
               {route.name}{" "}

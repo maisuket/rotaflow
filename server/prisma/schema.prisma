@@ -13,11 +13,13 @@ datasource db {
 }
 
 model Location {
-  id     String @id
-  name   String
-  lat    Float
-  lng    Float
-  demand Int    @default(1)
+  id        String   @id
+  name      String
+  lat       Float
+  lng       Float
+  demand    Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("locations")
 }
@@ -42,6 +44,9 @@ model Route {
   costPerKm        Float   @default(0)
   /// JSON de numeros 0-6 (0=domingo..6=sabado, igual Date.getDay()). Null/vazio = ativa todo dia.
   activeWeekdays   String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("routes")
 }

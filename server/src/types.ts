@@ -5,6 +5,13 @@ export interface Location {
   lng: number;
   /** Numero de passageiros representados por esta localizacao. Default 1. */
   demand: number;
+  /**
+   * ISO 8601. Opcionais (nao `?`-checados pelo algoritmo, so exibicao) pra
+   * nao forcar toda fixture de teste a preencher — apenas objetos vindos do
+   * banco de verdade trazem esses campos.
+   */
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 /**
@@ -37,6 +44,9 @@ export interface RouteVehicle {
   costPerKm: number;
   /** Dias da semana em que esta rota roda (0=domingo..6=sabado, igual Date.getDay()). Null = roda todo dia. */
   activeWeekdays: number[] | null;
+  /** ISO 8601. Opcionais pelo mesmo motivo de Location — ver comentario la. */
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 /**

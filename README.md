@@ -317,6 +317,19 @@ sempre público, sem exigir senha, pra diagnóstico.
   custo estimado total e taxa de ocupação média (passageiros ÷ capacidade).
   Os dados vêm só de viagens **confirmadas** (não de toda otimização feita).
 
+## Quando cada rota/localização foi criada ou editada
+
+Rotas e localizações têm `createdAt`/`updatedAt` no banco (preenchidos e
+atualizados automaticamente pelo Prisma — nenhum formulário pede essa data).
+Pra não poluir a lista, isso não aparece como texto fixo — passe o mouse
+sobre um item da lista ("Rotas" ou "Locais") pra ver um tooltip com "Criado
+em ..." e, se já foi editado depois de criado, "Atualizado em ...".
+
+Como isso foi adicionado numa sessão já com dados reais cadastrados, os
+registros que já existiam antes ganharam `createdAt`/`updatedAt` iguais ao
+momento da migração (não à data real em que foram criados, que nunca foi
+guardada) — só registros criados/editados a partir de agora têm a data real.
+
 ## Cache das APIs do Google
 
 Distância/duração (Distance Matrix), trajeto real (Directions) e endereço

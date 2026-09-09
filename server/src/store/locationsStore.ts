@@ -3,8 +3,29 @@ import { Prisma } from "@prisma/client";
 import { prisma } from "../db/client";
 import { Location } from "../types";
 
+function toLocation(row: {
+  id: string;
+  name: string;
+  lat: number;
+  lng: number;
+  demand: number;
+  createdAt: Date;
+  updatedAt: Date;
+}): Location {
+  return {
+    id: row.id,
+    name: row.name,
+    lat: row.lat,
+    lng: row.lng,
+    demand: row.demand,
+    createdAt: row.createdAt.toISOString(),
+    updatedAt: row.updatedAt.toISOString(),
+  };
+}
+
 export async function getAllLocations(): Promise<Location[]> {
-  return prisma.location.findMany();
+  const rows = await prisma.location.findMany();
+  return rows.map(toLocation);
 }
 
 export interface CreateLocationInput {
@@ -15,7 +36,7 @@ export interface CreateLocationInput {
 }
 
 export async function createLocation(input: CreateLocationInput): Promise<Location> {
-  return prisma.location.create({
+  const row = await prisma.location.create({
     data: {
       id: randomUUID(),
       name: input.name,
@@ -24,6 +45,7 @@ export async function createLocation(input: CreateLocationInput): Promise<Locati
       demand: input.demand ?? 1,
     },
   });
+  return toLocation(row);
 }
 
 export async function deleteLocation(id: string): Promise<boolean> {

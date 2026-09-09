@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { LockPosition, useAppState } from "../context/AppState";
 import { ConfirmButton } from "./ConfirmButton";
+import { timestampTitle } from "../utils/format";
 
 const UNASSIGNED_FILTER = "__unassigned__";
 
@@ -75,7 +76,7 @@ export function LocationList() {
       ) : (
         <ul className="list" style={{ marginTop: 10 }}>
           {filtered.map((loc) => (
-            <li className="list-item" key={loc.id}>
+            <li className="list-item" key={loc.id} title={timestampTitle(loc)}>
               <span className="list-item-main">
                 {loc.name}{" "}
                 <span className="list-item-meta">
