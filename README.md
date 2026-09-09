@@ -259,31 +259,39 @@ sempre público, sem exigir senha, pra diagnóstico.
   hexágono, estrela, octógono) nos marcadores do mapa e nos indicadores das
   listas — ajuda quem tem daltonismo a diferenciar rotas sem depender só da
   cor.
-- **Layout responsivo (celular)**: abaixo de 768px de largura, a barra
-  lateral e o mapa deixam de ficar lado a lado (não cabe os dois numa tela de
-  celular) e viram duas telas cheias alternáveis por um botão "📋 Painel /
-  🗺️ Mapa" no topo — pensado pra motoristas/gestores que acompanham a rota
-  pelo celular.
-- **Abas na barra lateral**: com a lista de seções crescendo (rotas,
-  localizações, importação, otimização, embarque, relatórios...), a sidebar
-  virou 5 abas com ícone + rótulo curto — **🚐 Rotas**, **📍 Locais**,
-  **⚡ Otimizar** (modo automático + botão otimizar + resultado),
-  **✅ Embarque** e **📊 Relatórios** — cada uma com uma linha de dica logo
-  abaixo explicando pra que serve, em vez de uma lista única rolando pra
-  sempre. Cada aba tem um propósito só (evita o problema de uma aba
-  "Cadastro" genérica virar um catch-all de novo).
+- **Layout de despacho (trilha de ícones + painel + mapa)**: inspirado em
+  ferramentas de roteirização/despacho (Onfleet, Circuit, Route4Me), a antiga
+  sidebar larga com abas dentro virou 3 colunas fixas:
+  - Uma **trilha estreita de ícones** (76px) na borda esquerda, sempre
+    visível, com a navegação principal — **🚐 Rotas**, **📍 Locais**,
+    **⚡ Otimizar**, **✅ Embarque**, **📊 Relatórios** — e o ícone de
+    engrenagem (⚙️) + sair no rodapé. Cada seção tem um propósito só (evita
+    o problema de uma aba "Cadastro" genérica virar um catch-all de novo).
+  - Um **painel de conteúdo** (380px) ao lado, com o título da seção ativa +
+    uma linha de dica explicando pra que serve, e o conteúdo daquela seção
+    (formulário + lista).
+  - O **mapa ocupa todo o resto da tela** (bem mais espaço que antes, já que
+    a navegação não compete mais por largura com o conteúdo), com um resumo
+    flutuante no topo (🚐 rotas, 📍 locais e, quando já tem resultado,
+    📏 distância / ⏱ tempo totais e ⚠ localizações sem rota).
   - O diagnóstico do Google Maps, o destino compartilhado e o horário de
     partida — configurações que se define uma vez e raramente revisita —
-    saíram do fluxo de abas e viraram um ícone de engrenagem (⚙️) no
-    cabeçalho, que abre um popover com os três juntos.
+    ficam fora da navegação principal, atrás do ícone de engrenagem, que
+    abre um popover com os três juntos.
   - Os formulários "Nova rota" e "Nova localização" (que cresceram bastante
     com os campos de motorista/veículo/recorrência) ficam recolhidos atrás
     de um botão "+ Nova rota" / "+ Nova localização" — a lista cadastrada é
-    o conteúdo principal da aba, não o formulário.
-  - Na aba Otimizar, o botão principal ("Otimizar rotas cadastradas") e o
+    o conteúdo principal da seção, não o formulário.
+  - Na seção Otimizar, o botão principal ("Otimizar rotas cadastradas") e o
     resultado vêm primeiro; o "Modo automático" (um jeito alternativo de
     rodar sem rotas pré-cadastradas) fica recolhido atrás de um botão "Usar
     modo automático", pra não competir visualmente com o fluxo principal.
+- **Layout responsivo (celular)**: abaixo de 768px de largura, a trilha de
+  ícones vira uma barra horizontal no topo (só ícone + rótulo curto, sem a
+  marca) e o painel/mapa deixam de ficar lado a lado (não cabe os dois numa
+  tela de celular) — viram duas telas cheias alternáveis por um botão
+  "📋 Painel / 🗺️ Mapa" no topo, pensado pra motoristas/gestores que
+  acompanham a rota pelo celular.
 
 ## Motorista, veículo, recorrência semanal, relatórios e embarque
 

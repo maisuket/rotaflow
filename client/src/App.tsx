@@ -12,7 +12,8 @@ import { AutoOptimizePanel } from "./components/AutoOptimizePanel";
 import { SettingsPopover } from "./components/SettingsPopover";
 import { TripBoardingPanel } from "./components/TripBoardingPanel";
 import { ReportsPanel } from "./components/ReportsPanel";
-import { TabBar, TabId } from "./components/TabBar";
+import { StatsStrip } from "./components/StatsStrip";
+import { IconRail, TABS, TabId } from "./components/IconRail";
 import { getAuthToken, setAuthToken } from "./api/authToken";
 
 export default function App() {
@@ -22,9 +23,10 @@ export default function App() {
   };
 
   // So tem efeito em telas de celular (ver media query em styles.css) — em
-  // telas largas, sidebar e mapa ficam lado a lado sempre, como antes.
+  // telas largas, rail + painel + mapa ficam lado a lado sempre.
   const [mobileView, setMobileView] = useState<"list" | "map">("list");
   const [activeTab, setActiveTab] = useState<TabId>("rotas");
+  const activeTabDef = TABS.find((t) => t.id === activeTab)!;
 
   return (
     <AppStateProvider>
@@ -45,30 +47,29 @@ export default function App() {
             🗺️ Mapa
           </button>
         </div>
-        <aside className="sidebar">
-          <div className="sidebar-header">
-            <div className="brand-mark">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                <path
-                  d="M12 2C7.6 2 4 5.6 4 10c0 6 8 12 8 12s8-6 8-12c0-4.4-3.6-8-8-8Z"
-                  fill="currentColor"
-                />
-                <circle cx="12" cy="10" r="3" fill="var(--color-primary)" />
-              </svg>
-            </div>
-            <div style={{ flex: 1 }}>
-              <div className="app-title">BoraBora</div>
-              <div className="app-subtitle">Roteirizador de passageiros</div>
-            </div>
-            <SettingsPopover />
-            {getAuthToken() && (
-              <button className="btn btn-ghost btn-sm" onClick={handleLogout}>
-                Sair
-              </button>
-            )}
-          </div>
 
-          <TabBar active={activeTab} onChange={setActiveTab} />
+        <IconRail
+          active={activeTab}
+          onChange={setActiveTab}
+          trailing={
+            <>
+              <SettingsPopover />
+              {getAuthToken() && (
+                <button className="btn-icon" title="Sair" onClick={handleLogout}>
+                  🚪
+                </button>
+              )}
+            </>
+          }
+        />
+
+        <aside className="content-panel">
+          <div className="content-panel-header">
+            <h1 className="content-panel-title">
+              <span aria-hidden="true">{activeTabDef.icon}</span> {activeTabDef.label}
+            </h1>
+            <p className="content-panel-hint">{activeTabDef.hint}</p>
+          </div>
 
           {activeTab === "rotas" && (
             <div className="section">
@@ -103,6 +104,7 @@ export default function App() {
         </aside>
 
         <main className="main">
+          <StatsStrip />
           <MapView />
         </main>
       </div>
