@@ -309,11 +309,14 @@ sempre público, sem exigir senha, pra diagnóstico.
   ignoradas ao clicar "Otimizar" — o resultado mostra um aviso com quais
   rotas ficaram de fora por causa disso. Nenhum dia marcado = roda todo dia
   (comportamento padrão, sem precisar configurar nada em rotas existentes).
-- **Confirmar viagem do dia**: o resultado de uma otimização é só uma
-  prévia — clicar em "✅ Confirmar viagem de hoje" no painel de resultado
+- **Confirmar viagem de qualquer dia**: o resultado de uma otimização é só
+  uma prévia — clicar em "✅ Confirmar viagem..." no painel de resultado
   salva uma cópia permanente (motorista, paradas, distância, custo estimado)
   como o histórico daquele dia. Só otimizar/reotimizar de novo **não** grava
   nada — é uma ação explícita, pra não sujar o histórico com ajustes/testes.
+  O campo "Confirmar para o dia" antes do botão tem "hoje" como padrão, mas
+  pode ser trocado — útil pra registrar um teste feito hoje como a viagem de
+  amanhã, sem precisar reotimizar no dia certo.
 - **Confirmação de embarque / no-show**: aba "Embarque" — escolha uma data
   (padrão: hoje) e marque, por passageiro, "✓ Embarcou" ou "✗ Faltou" numa
   viagem já confirmada. Clicar de novo no mesmo estado desmarca. Usa o mesmo

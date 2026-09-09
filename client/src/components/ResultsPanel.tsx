@@ -4,6 +4,7 @@ import { colorForRouteIndex } from "../utils/colors";
 import { shapeForRouteIndex } from "../utils/shapes";
 import { RouteShapeIcon } from "./RouteShapeIcon";
 import { formatClock, formatDistance, formatDuration } from "../utils/format";
+import { todayDateString } from "../utils/date";
 
 function UnassignedRow({ locationId, name }: { locationId: string; name: string }) {
   const { routes, assignLocationToRoute, loading } = useAppState();
@@ -49,6 +50,10 @@ export function ResultsPanel() {
   const { result, locations, routes, reorderStop, confirmTrip, loading } = useAppState();
   const [confirming, setConfirming] = useState(false);
   const [confirmMessage, setConfirmMessage] = useState<string | null>(null);
+  // Data em que essa viagem vira historico — default hoje, mas pode trocar
+  // pra registrar/agendar um dia diferente (ex: um teste feito hoje pra
+  // uma viagem de amanha) sem precisar reotimizar naquele dia.
+  const [tripDate, setTripDate] = useState(todayDateString());
   // Arrastar-e-soltar pra reordenar paradas — guarda so o indice enquanto
   // arrasta (a origem real vai no dataTransfer, entao funciona mesmo se o
   // componente re-renderizar no meio do gesto).
@@ -65,12 +70,15 @@ export function ResultsPanel() {
   const handleConfirmTrip = async () => {
     setConfirming(true);
     setConfirmMessage(null);
-    const trip = await confirmTrip();
+    const trip = await confirmTrip(tripDate);
     setConfirming(false);
     setConfirmMessage(
       trip ? `Viagem de ${trip.date} confirmada com ${trip.routes.length} rota(s).` : null
     );
   };
+
+  const isToday = tripDate === todayDateString();
+  const [, tripMonth, tripDay] = tripDate.split("-");
 
   return (
     <div style={{ marginTop: 14 }}>
@@ -82,13 +90,37 @@ export function ResultsPanel() {
         </div>
       )}
 
+      <div className="confirm-trip-date-row">
+        <label className="field-label" style={{ marginBottom: 0 }}>
+          Confirmar para o dia
+        </label>
+        <input
+          className="input"
+          type="date"
+          value={tripDate}
+          onChange={(e) => setTripDate(e.target.value)}
+          style={{ maxWidth: 150 }}
+        />
+        {!isToday && (
+          <button
+            type="button"
+            className="btn btn-ghost btn-sm"
+            onClick={() => setTripDate(todayDateString())}
+          >
+            Hoje
+          </button>
+        )}
+      </div>
+
       <button
         className="btn btn-success btn-block"
         style={{ marginBottom: 10 }}
         onClick={handleConfirmTrip}
         disabled={confirming || loading}
       >
-        {confirming ? "Confirmando…" : "✅ Confirmar viagem de hoje"}
+        {confirming
+          ? "Confirmando…"
+          : `✅ Confirmar viagem ${isToday ? "de hoje" : `para ${tripDay}/${tripMonth}`}`}
       </button>
       {confirmMessage && (
         <div className="alert alert-success" style={{ marginBottom: 10 }}>

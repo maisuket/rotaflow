@@ -218,6 +218,16 @@ export function TripBoardingPanel() {
                     >
                       {copiedRouteId === route.id ? "✓ Copiado" : "🔗 Link do motorista"}
                     </button>
+                    {route.mapsUrl && (
+                      <a
+                        className="btn btn-ghost btn-sm"
+                        href={route.mapsUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        🧭 Ver rota traçada
+                      </a>
+                    )}
                   </div>
 
                   {linkOpenForRouteId === route.id && (

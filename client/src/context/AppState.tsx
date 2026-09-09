@@ -84,8 +84,8 @@ interface AppStateValue {
    * dessa rota, sem rodar o pipeline inteiro de novo.
    */
   reorderStop: (routeId: string, fromIndex: number, toIndex: number) => Promise<void>;
-  /** Confirma o resultado atual (ja exibido na tela) como a viagem de hoje — vira historico permanente. */
-  confirmTrip: () => Promise<TripRecord | null>;
+  /** Confirma o resultado atual (ja exibido na tela) como historico permanente — "YYYY-MM-DD", default hoje (util pra agendar/registrar outro dia). */
+  confirmTrip: (date?: string) => Promise<TripRecord | null>;
   /** Quando nao-null, o proximo clique no mapa preenche `pickedResult` para este alvo. */
   pickMode: PickTarget | null;
   setPickMode: (target: PickTarget | null) => void;
@@ -309,11 +309,11 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     setLoading(false);
   };
 
-  const confirmTrip: AppStateValue["confirmTrip"] = async () => {
+  const confirmTrip: AppStateValue["confirmTrip"] = async (date) => {
     if (!result || result.routes.length === 0) return null;
     let trip: TripRecord | null = null;
     await withErrorHandling(async () => {
-      trip = await api.confirmTrip({ routes: result.routes });
+      trip = await api.confirmTrip({ date, routes: result.routes });
     });
     return trip;
   };
