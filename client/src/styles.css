@@ -848,6 +848,59 @@ button {
 
 /* ---------- confirmacao de embarque ---------- */
 
+.boarding-date-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+/* ---------- cabecalho recolhivel de cada rota ---------- */
+
+.boarding-route-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: transparent;
+  font: inherit;
+  color: var(--color-text);
+  cursor: pointer;
+  text-align: left;
+}
+
+.boarding-route-toggle {
+  color: var(--color-text-faint);
+  font-size: 11px;
+  flex-shrink: 0;
+  width: 10px;
+}
+
+.boarding-route-name {
+  font-weight: 700;
+  font-size: 13.5px;
+  flex-shrink: 0;
+}
+
+.boarding-route-progress {
+  margin-left: auto;
+  font-size: 12.5px;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+}
+
+.boarding-route-noshow {
+  color: var(--color-danger);
+  font-weight: 600;
+}
+
+.boarding-route-body {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--color-border);
+}
+
 .boarding-list {
   list-style: none;
   margin: 8px 0 0;
@@ -857,25 +910,28 @@ button {
   gap: 6px;
 }
 
+/* Sinaliza o status com uma faixa na borda esquerda em vez de pintar a
+   linha inteira — com quase todas as paradas marcadas, um fundo colorido
+   solido em cada linha vira um "tabuleiro de xadrez" cansativo de escanear;
+   a faixa mantem o status visivel sem esse ruido visual. */
 .boarding-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  padding: 7px 9px;
+  padding: 7px 9px 7px 11px;
   border-radius: var(--radius-md);
   border: 1px solid var(--color-border);
+  border-left: 3px solid var(--color-border);
   background: var(--color-surface);
 }
 
 .boarding-row.is-boarded {
-  background: var(--color-success-soft);
-  border-color: var(--color-success-border);
+  border-left-color: var(--color-success);
 }
 
 .boarding-row.is-no-show {
-  background: var(--color-danger-soft);
-  border-color: var(--color-danger-border);
+  border-left-color: var(--color-danger);
 }
 
 .boarding-row-info {
