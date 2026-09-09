@@ -4,6 +4,7 @@ import { getDestination } from "../store/destinationStore";
 import { getSettings } from "../store/settingsStore";
 import { runAutoOptimization } from "../services/autoOptimizePipeline";
 import { createGoogleMapsClient } from "../services/googleMapsClient";
+import { withCache } from "../services/cachedGoogleMapsClient";
 import { env } from "../config/env";
 import { ValidationError } from "../middleware/errorHandler";
 import { OutlierDecision } from "../types";
@@ -46,7 +47,7 @@ autoOptimizeRouter.post("/", async (req, res, next) => {
       getDestination(),
       getSettings(),
     ]);
-    const client = createGoogleMapsClient(env.googleMapsApiKey);
+    const client = withCache(createGoogleMapsClient(env.googleMapsApiKey));
     const result = await runAutoOptimization(
       locations,
       capacityPerVehicle,

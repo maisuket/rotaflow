@@ -7,6 +7,7 @@ import {
 import { ValidationError } from "../middleware/errorHandler";
 import { ImportRow, resolveImportRows } from "../services/csvImport";
 import { createGoogleMapsClient } from "../services/googleMapsClient";
+import { withCache } from "../services/cachedGoogleMapsClient";
 import { env } from "../config/env";
 import { expensiveLimiter } from "../middleware/rateLimit";
 
@@ -77,7 +78,7 @@ locationsRouter.post("/import", expensiveLimiter, async (req, res, next) => {
       return;
     }
 
-    const client = needsGeocoding ? createGoogleMapsClient(env.googleMapsApiKey) : null;
+    const client = needsGeocoding ? withCache(createGoogleMapsClient(env.googleMapsApiKey)) : null;
     const geocode = async (address: string) => {
       const result = await client!.geocodeAddress(address);
       return result ? { lat: result.lat, lng: result.lng } : null;

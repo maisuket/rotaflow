@@ -13,6 +13,7 @@ import { ValidationError } from "../middleware/errorHandler";
 import { RouteOriginMode, RouteVehicle } from "../types";
 import { computeManualOrderResult } from "../services/manualReorder";
 import { createGoogleMapsClient } from "../services/googleMapsClient";
+import { withCache } from "../services/cachedGoogleMapsClient";
 import { expensiveLimiter } from "../middleware/rateLimit";
 import { env } from "../config/env";
 import { timeStringToSeconds } from "../utils/time";
@@ -301,7 +302,7 @@ routesRouter.post("/manual-order", expensiveLimiter, async (req, res, next) => {
       activeWeekdays: null,
     };
 
-    const client = createGoogleMapsClient(env.googleMapsApiKey);
+    const client = withCache(createGoogleMapsClient(env.googleMapsApiKey));
     const result = await computeManualOrderResult(
       routeLike,
       orderedLocations,

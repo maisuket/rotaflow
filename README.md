@@ -317,6 +317,29 @@ sempre público, sem exigir senha, pra diagnóstico.
   custo estimado total e taxa de ocupação média (passageiros ÷ capacidade).
   Os dados vêm só de viagens **confirmadas** (não de toda otimização feita).
 
+## Cache das APIs do Google
+
+Distância/duração (Distance Matrix), trajeto real (Directions) e endereço
+(Geocoding) ficam cacheados no próprio banco (`server/src/services/
+cachedGoogleMapsClient.ts`), sem TTL de propósito — a distância rodoviária
+entre 2 pontos fixos ou o trajeto de uma sequência exata de paradas
+praticamente nunca muda. Na prática, reotimizar sem ter mudado
+localizações/rotas fica **quase grátis**: nenhuma chamada nova ao Google, só
+leituras do SQLite.
+
+- Testado na prática: primeira chamada a `/api/optimize` ~7,6s (bate no
+  Google de verdade); segunda chamada idêntica ~1,3s, **sem nenhuma
+  chamada nova ao Google** (confirmado pelas linhas das tabelas de cache
+  não crescerem). Geocodificação repetida caiu de ~660ms pra ~7ms.
+- O endpoint de diagnóstico (`/api/diagnostics/google`, usado no popover de
+  configurações) **não usa cache de propósito** — o objetivo dele é testar
+  se a chave/API funcionam *agora*; um resultado cacheado mascararia uma
+  falha real.
+- Sem invalidação automática: se algum dia for preciso forçar uma
+  atualização (ex: Google mudou uma rota), limpe as linhas das tabelas
+  `distance_cache`, `directions_cache` ou `geocode_cache` via
+  `npm run db:studio -w server`.
+
 ## Banco de dados
 
 Persistência via **SQLite + Prisma** (`server/prisma/schema.prisma`), em

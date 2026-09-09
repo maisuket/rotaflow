@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { createGoogleMapsClient } from "../services/googleMapsClient";
+import { withCache } from "../services/cachedGoogleMapsClient";
 import { env } from "../config/env";
 import { ValidationError } from "../middleware/errorHandler";
 
@@ -20,7 +21,7 @@ geocodeRouter.get("/", async (req, res, next) => {
       return;
     }
 
-    const client = createGoogleMapsClient(env.googleMapsApiKey);
+    const client = withCache(createGoogleMapsClient(env.googleMapsApiKey));
     const result = await client.geocodeAddress(query);
 
     if (!result) {

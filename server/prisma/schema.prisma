@@ -107,6 +107,42 @@ model TripRoute {
   @@map("trip_routes")
 }
 
+/// Cache de distancia/duracao entre 2 pontos (Distance Matrix API). A chave e
+/// as coordenadas arredondadas de origem+destino — dist/duracao rodoviaria
+/// entre 2 pontos fixos praticamente nunca muda, entao guardamos pra sempre
+/// (sem TTL): reotimizar sem mudar localizacoes/rotas fica quase gratis.
+model DistanceCache {
+  key             String   @id
+  distanceMeters  Float
+  durationSeconds Float
+  createdAt       DateTime @default(now())
+
+  @@map("distance_cache")
+}
+
+/// Cache de trajeto real (Directions API) para uma sequencia exata de origem+paradas+destino.
+model DirectionsCache {
+  key             String   @id
+  encodedPolyline String
+  /// JSON de DirectionsLeg[]
+  legsJson        String
+  createdAt       DateTime @default(now())
+
+  @@map("directions_cache")
+}
+
+/// Cache de geocodificacao (endereco -> coordenadas). `found=false` guarda "nao encontrado" (ZERO_RESULTS).
+model GeocodeCache {
+  key              String   @id
+  found            Boolean
+  lat              Float?
+  lng              Float?
+  formattedAddress String?
+  createdAt        DateTime @default(now())
+
+  @@map("geocode_cache")
+}
+
 model TripStop {
   id          String    @id
   tripRouteId String

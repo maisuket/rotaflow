@@ -5,6 +5,7 @@ import { getDestination } from "../store/destinationStore";
 import { getSettings } from "../store/settingsStore";
 import { runOptimization } from "../services/optimizePipeline";
 import { createGoogleMapsClient } from "../services/googleMapsClient";
+import { withCache } from "../services/cachedGoogleMapsClient";
 import { env } from "../config/env";
 import { timeStringToSeconds } from "../utils/time";
 import { isRouteActiveOnWeekday } from "../utils/recurrence";
@@ -50,7 +51,7 @@ optimizeRouter.post("/", async (req, res, next) => {
       .filter((r) => !isRouteActiveOnWeekday(r, today))
       .map((r) => r.id);
 
-    const client = createGoogleMapsClient(env.googleMapsApiKey);
+    const client = withCache(createGoogleMapsClient(env.googleMapsApiKey));
     const result = await runOptimization(
       locations,
       activeRoutes,
