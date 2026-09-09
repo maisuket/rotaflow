@@ -1,7 +1,7 @@
 import { randomUUID } from "crypto";
 import { Prisma } from "@prisma/client";
 import { prisma } from "../db/client";
-import { TripRecord, TripRouteRecord, TripStopRecord } from "../types";
+import { DriverRouteView, TripRecord, TripRouteRecord, TripStopRecord } from "../types";
 
 const tripInclude = {
   routes: { include: { stops: { orderBy: { order: "asc" as const } } } },
@@ -124,7 +124,13 @@ export async function setTripStopBoarded(
   boarded: boolean | null
 ): Promise<TripStopRecord | null> {
   try {
-    const row = await prisma.tripStop.update({ where: { id: stopId }, data: { boarded } });
+    const row = await prisma.tripStop.update({
+      where: { id: stopId },
+      // `boardedAt` guarda o horario REAL da decisao (usado no relatorio de
+      // pontualidade) — volta a null junto com `boarded` pra nao deixar um
+      // horario "orfao" de uma marcacao ja desfeita.
+      data: { boarded, boardedAt: boarded === null ? null : new Date() },
+    });
     return toTripStopRecord(row);
   } catch (err) {
     if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2025") {
@@ -132,6 +138,40 @@ export async function setTripStopBoarded(
     }
     throw err;
   }
+}
+
+/**
+ * Variante usada pelo link publico do motorista: so aplica a mudanca se o
+ * stop realmente pertencer a essa tripRouteId, pra um link de uma rota nao
+ * conseguir alterar a parada de outra rota mesmo adivinhando o id do stop.
+ */
+export async function setDriverStopBoarded(
+  tripRouteId: string,
+  stopId: string,
+  boarded: boolean | null
+): Promise<TripStopRecord | null> {
+  const stop = await prisma.tripStop.findUnique({ where: { id: stopId } });
+  if (!stop || stop.tripRouteId !== tripRouteId) return null;
+  return setTripStopBoarded(stopId, boarded);
+}
+
+export async function getTripRouteForDriver(tripRouteId: string): Promise<DriverRouteView | null> {
+  const row = await prisma.tripRoute.findUnique({
+    where: { id: tripRouteId },
+    include: { stops: { orderBy: { order: "asc" } }, trip: true },
+  });
+  if (!row) return null;
+  return {
+    tripRouteId: row.id,
+    tripId: row.tripId,
+    date: row.trip.date,
+    routeName: row.routeName,
+    driverName: row.driverName,
+    vehiclePlate: row.vehiclePlate,
+    vehicleTypeLabel: row.vehicleTypeLabel,
+    destinationName: row.destinationName,
+    stops: row.stops.map(toTripStopRecord),
+  };
 }
 
 function toTripStopRecord(row: TripStopRow): TripStopRecord {
@@ -145,6 +185,7 @@ function toTripStopRecord(row: TripStopRow): TripStopRecord {
     order: row.order,
     etaSeconds: row.etaSeconds,
     boarded: row.boarded,
+    boardedAt: row.boardedAt ? row.boardedAt.toISOString() : null,
   };
 }
 

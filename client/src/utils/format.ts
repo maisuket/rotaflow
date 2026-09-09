@@ -22,6 +22,18 @@ export function formatDateTime(iso: string): string {
   return `${date} ${time}`;
 }
 
+/** ISO 8601 -> "HH:MM" no fuso local do navegador (sem a parte da data). */
+export function formatTimeOnly(iso: string): string {
+  return new Date(iso).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+}
+
+/** Segundos de atraso (negativo = adiantado) -> rótulo curto pro relatório de pontualidade. */
+export function formatDelay(seconds: number): string {
+  const minutes = Math.round(seconds / 60);
+  if (minutes === 0) return "no horário";
+  return minutes > 0 ? `${minutes} min atraso` : `${Math.abs(minutes)} min adiantado`;
+}
+
 /**
  * Tooltip com data de cadastro/edição, pra usar como `title` num item de
  * lista — só aparece ao passar o mouse, não ocupa espaço na tela.

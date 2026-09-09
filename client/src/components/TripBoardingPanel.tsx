@@ -2,13 +2,32 @@ import { useEffect, useState } from "react";
 import { api, ApiError } from "../api/client";
 import { TripRecord } from "../types";
 import { todayDateString } from "../utils/date";
-import { formatClock } from "../utils/format";
+import { formatClock, formatTimeOnly } from "../utils/format";
+
+function driverLinkFor(tripRouteId: string): string {
+  return `${window.location.origin}/motorista/${tripRouteId}`;
+}
 
 export function TripBoardingPanel() {
   const [date, setDate] = useState(todayDateString());
   const [trip, setTrip] = useState<TripRecord | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [copiedRouteId, setCopiedRouteId] = useState<string | null>(null);
+  const [linkOpenForRouteId, setLinkOpenForRouteId] = useState<string | null>(null);
+
+  const copyDriverLink = async (routeId: string) => {
+    const url = driverLinkFor(routeId);
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopiedRouteId(routeId);
+      window.setTimeout(() => setCopiedRouteId((id) => (id === routeId ? null : id)), 2000);
+    } catch {
+      // clipboard pode falhar (permissao, contexto nao seguro) — o link ainda
+      // fica visivel abaixo do botao pra copiar manualmente.
+    }
+    setLinkOpenForRouteId((id) => (id === routeId ? null : routeId));
+  };
 
   const loadTrip = async (targetDate: string) => {
     setLoading(true);
@@ -87,7 +106,24 @@ export function TripBoardingPanel() {
                   {boardedCount}/{route.stops.length} embarcaram
                 </span>
                 {noShowCount > 0 && <span className="badge badge-danger">{noShowCount} faltou</span>}
+                <button
+                  type="button"
+                  className="btn btn-secondary btn-sm"
+                  onClick={() => copyDriverLink(route.id)}
+                >
+                  {copiedRouteId === route.id ? "✓ Copiado" : "🔗 Link do motorista"}
+                </button>
               </div>
+
+              {linkOpenForRouteId === route.id && (
+                <input
+                  className="input"
+                  readOnly
+                  value={driverLinkFor(route.id)}
+                  onFocus={(e) => e.currentTarget.select()}
+                  style={{ marginBottom: 10, fontSize: 12 }}
+                />
+              )}
 
               <ol className="boarding-list">
                 {route.stops.map((stop, si) => (
@@ -101,7 +137,10 @@ export function TripBoardingPanel() {
                       <div className="boarding-row-name">{stop.name}</div>
                       <div className="boarding-row-meta">
                         {stop.demand} pax
-                        {stop.etaSeconds !== null && <> · chegada {formatClock(stop.etaSeconds)}</>}
+                        {stop.etaSeconds !== null && <> · previsto {formatClock(stop.etaSeconds)}</>}
+                        {stop.boarded === true && stop.boardedAt && (
+                          <> · embarcou {formatTimeOnly(stop.boardedAt)}</>
+                        )}
                       </div>
                     </div>
                     <div className="boarding-row-actions">

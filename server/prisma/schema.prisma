@@ -163,6 +163,8 @@ model TripStop {
   etaSeconds Int?
   /// null = ainda nao marcado, true = embarcou, false = nao embarcou (no-show)
   boarded    Boolean?
+  /// Horario real em que `boarded` foi definido (null quando `boarded` volta a null) — alimenta o relatorio de pontualidade (previsto em etaSeconds vs realizado aqui).
+  boardedAt  DateTime?
 
   @@map("trip_stops")
 }

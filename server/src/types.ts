@@ -184,6 +184,8 @@ export interface TripStopRecord {
   etaSeconds: number | null;
   /** null = ainda nao marcado, true = embarcou, false = nao embarcou (no-show). */
   boarded: boolean | null;
+  /** Horario real (ISO) em que `boarded` foi definido; null quando `boarded` volta a null. Alimenta o relatorio de pontualidade. */
+  boardedAt: string | null;
 }
 
 export interface TripRouteRecord {
@@ -210,6 +212,25 @@ export interface TripRecord {
   date: string;
   createdAt: string;
   routes: TripRouteRecord[];
+}
+
+/**
+ * O que o link publico do motorista (`/api/driver/:tripRouteId`) expoe — so a
+ * rota dele, nunca as outras rotas da mesma viagem nem dados de outras
+ * viagens. `tripRouteId` funciona como o proprio "token" do link (id
+ * aleatorio ja gerado na confirmacao da viagem, nao adivinhavel).
+ */
+export interface DriverRouteView {
+  tripRouteId: string;
+  tripId: string;
+  /** "YYYY-MM-DD" */
+  date: string;
+  routeName: string;
+  driverName: string | null;
+  vehiclePlate: string | null;
+  vehicleTypeLabel: string | null;
+  destinationName: string | null;
+  stops: TripStopRecord[];
 }
 
 /** Interface minima que os servicos usam para falar com o Google Maps — injetavel para testes. */

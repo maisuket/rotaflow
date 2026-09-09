@@ -129,6 +129,8 @@ export interface TripStopRecord {
   etaSeconds: number | null;
   /** null = ainda nao marcado, true = embarcou, false = nao embarcou (no-show). */
   boarded: boolean | null;
+  /** Horario real (ISO) em que `boarded` foi definido; null quando `boarded` volta a null. */
+  boardedAt: string | null;
 }
 
 export interface TripRouteRecord {
@@ -155,4 +157,18 @@ export interface TripRecord {
   date: string;
   createdAt: string;
   routes: TripRouteRecord[];
+}
+
+/** O que o link publico do motorista (/motorista/:tripRouteId) exibe. */
+export interface DriverRouteView {
+  tripRouteId: string;
+  tripId: string;
+  /** "YYYY-MM-DD" */
+  date: string;
+  routeName: string;
+  driverName: string | null;
+  vehiclePlate: string | null;
+  vehicleTypeLabel: string | null;
+  destinationName: string | null;
+  stops: TripStopRecord[];
 }

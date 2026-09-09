@@ -314,16 +314,30 @@ sempre público, sem exigir senha, pra diagnóstico.
   salva uma cópia permanente (motorista, paradas, distância, custo estimado)
   como o histórico daquele dia. Só otimizar/reotimizar de novo **não** grava
   nada — é uma ação explícita, pra não sujar o histórico com ajustes/testes.
-- **Confirmação de embarque / no-show**: seção "Confirmação de embarque" —
-  escolha uma data (padrão: hoje) e marque, por passageiro, "✓ Embarcou" ou
-  "✗ Faltou" numa viagem já confirmada. Clicar de novo no mesmo estado
-  desmarca. Fica salvo por passageiro/viagem, sem tela ou acesso separado —
-  usa o mesmo login (senha compartilhada) do resto do app, pensando em quem
-  acompanha a rota pelo celular (ver layout responsivo acima).
+- **Confirmação de embarque / no-show**: aba "Embarque" — escolha uma data
+  (padrão: hoje) e marque, por passageiro, "✓ Embarcou" ou "✗ Faltou" numa
+  viagem já confirmada. Clicar de novo no mesmo estado desmarca. Usa o mesmo
+  login (senha compartilhada) do resto do app — pensado pro dispatcher, não
+  pro motorista (ver link dedicado abaixo).
+- **Link do motorista**: cada rota, na aba "Embarque", tem um botão
+  "🔗 Link do motorista" que copia (e mostra) uma URL do tipo
+  `/motorista/<id>` — uma página separada, sem sidebar/mapa/login, feita pra
+  abrir no celular do próprio motorista. Ele vê só a rota dele e marca quem
+  embarcou direto, sem precisar da senha do painel admin. O id na URL é um
+  UUID já gerado na confirmação da viagem (não sequencial, não adivinhável)
+  e só dá acesso àquela rota específica — nunca às outras rotas da mesma
+  viagem nem a outras viagens.
+- **Pontualidade real**: toda vez que "✓ Embarcou"/"✗ Faltou" é marcado
+  (pelo motorista ou pelo painel admin), o horário real fica salvo junto —
+  aparece como "embarcou HH:MM" ao lado do horário previsto na lista de
+  embarque, e alimenta a coluna "Pontualidade" dos Relatórios (atraso médio
+  e % de paradas dentro de 5 minutos do previsto). Viagens confirmadas antes
+  dessa mudança não têm esse horário real — a coluna mostra "—" pra elas.
 - **Relatórios**: seção "Relatórios" — escolha um período (padrão: mês
   atual) e veja, por rota, quantas viagens confirmadas houve, km total,
-  custo estimado total e taxa de ocupação média (passageiros ÷ capacidade).
-  Os dados vêm só de viagens **confirmadas** (não de toda otimização feita).
+  custo estimado total, taxa de ocupação média (passageiros ÷ capacidade) e
+  pontualidade (ver acima). Os dados vêm só de viagens **confirmadas** (não
+  de toda otimização feita).
 
 ## Quando cada rota/localização foi criada ou editada
 

@@ -9,6 +9,7 @@ import { autoOptimizeRouter } from "./routes/autoOptimize.routes";
 import { settingsRouter } from "./routes/settings.routes";
 import { diagnosticsRouter } from "./routes/diagnostics.routes";
 import { tripsRouter } from "./routes/trips.routes";
+import { driverRouter } from "./routes/driver.routes";
 import { errorHandler } from "./middleware/errorHandler";
 import { requireAuth } from "./middleware/auth";
 import { expensiveLimiter, generalLimiter } from "./middleware/rateLimit";
@@ -24,6 +25,11 @@ app.use(express.json());
 app.get("/api/health", (_req, res) => {
   res.json({ ok: true, hasApiKey: Boolean(env.googleMapsApiKey), authRequired: Boolean(env.appPassword) });
 });
+
+// Publica de proposito (montada ANTES do requireAuth abaixo): o link do
+// motorista precisa funcionar sem a senha compartilhada do painel admin. O
+// id da rota na URL e o proprio token de acesso — ver driver.routes.ts.
+app.use("/api/driver", generalLimiter, driverRouter);
 
 app.use("/api", generalLimiter);
 app.use("/api", requireAuth);

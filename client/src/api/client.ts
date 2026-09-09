@@ -1,5 +1,6 @@
 import {
   AutoOptimizeResponse,
+  DriverRouteView,
   GeocodeResult,
   GlobalDestination,
   GlobalSettings,
@@ -188,4 +189,13 @@ export const api = {
       body: JSON.stringify({ boarded }),
     }),
   deleteTrip: (id: string) => request<void>(`/trips/${id}`, { method: "DELETE" }),
+
+  // Publicas de proposito (sem senha) — usadas pelo link do motorista.
+  getDriverRoute: (tripRouteId: string) =>
+    request<DriverRouteView>(`/driver/${tripRouteId}`),
+  setDriverStopBoarded: (tripRouteId: string, stopId: string, boarded: boolean | null) =>
+    request<TripStopRecord>(`/driver/${tripRouteId}/stops/${stopId}`, {
+      method: "PATCH",
+      body: JSON.stringify({ boarded }),
+    }),
 };
