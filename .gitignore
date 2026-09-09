@@ -1,0 +1,19 @@
+node_modules/
+dist/
+build/
+**/.env
+server/data/db.json
+server/data/*.db
+server/data/*.db-journal
+server/data/*.db-wal
+server/data/*.db-shm
+.DS_Store
+*.log
+*.tsbuildinfo
+
+# Estado interno do Claude Code (nao faz parte do app)
+.claude/
+
+# Export renderizado do canvas de design (payload do editor, ~2MB) — os
+# fontes ficam em Main.dc.html/Mobile.dc.html/canvas.json, versionados normalmente.
+borabora-tabs-redesign.html

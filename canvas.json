@@ -1,0 +1,11 @@
+{
+  "artboards": [
+    { "file": "Main.dc.html", "x": 0, "y": 0, "w": 1280, "h": 860 },
+    { "file": "Mobile.dc.html", "x": 1380, "y": 0, "w": 390, "h": 844 }
+  ],
+  "annotations": [
+    { "id": "note-main", "x": 0, "y": -90, "w": 420, "text": "Desktop — 4 abas (Cadastro / Otimizar / Embarque / Relatórios) + diagnóstico movido para o ícone de engrenagem. Clique nas abas e no ⚙️ para navegar." },
+    { "id": "note-mobile", "x": 1380, "y": -90, "w": 390, "text": "Celular — mesmas abas dentro do Painel. Abre em \"Embarque\" (uso mais comum do motorista)." }
+  ],
+  "launch": { "view": "canvas" }
+}

@@ -1,0 +1,127 @@
+// Schema em SQLite. Para trocar pra Neon/Postgres no futuro: troque
+// `provider` abaixo para "postgresql", aponte DATABASE_URL pra connection
+// string do Neon, e rode `npx prisma migrate dev` de novo — as queries em
+// server/src/store/*.ts (via @prisma/client) nao mudam nada.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Location {
+  id     String @id
+  name   String
+  lat    Float
+  lng    Float
+  demand Int    @default(1)
+
+  @@map("locations")
+}
+
+model Route {
+  id            String  @id
+  name          String
+  depotLat      Float
+  depotLng      Float
+  capacity      Int
+  returnToDepot Boolean @default(true)
+  /// "depot" | "firstPassenger"
+  originMode    String  @default("depot")
+
+  driverName       String?
+  driverPhone      String?
+  vehiclePlate     String?
+  vehicleTypeLabel String?
+  /// Multiplicador aplicado a duracao/ETA (1.0 = normal, >1.0 = mais lento). Nao afeta distancia.
+  speedFactor      Float   @default(1)
+  /// Custo estimado por km rodado, usado so pra exibir/relatar (nao afeta o algoritmo).
+  costPerKm        Float   @default(0)
+  /// JSON de numeros 0-6 (0=domingo..6=sabado, igual Date.getDay()). Null/vazio = ativa todo dia.
+  activeWeekdays   String?
+
+  @@map("routes")
+}
+
+/// Singleton: sempre no maximo 1 linha (id fixo = 1), destino compartilhado por todas as rotas.
+model Destination {
+  id   Int    @id @default(1)
+  name String
+  lat  Float
+  lng  Float
+
+  @@map("destination")
+}
+
+/// Singleton: configuracoes globais simples (por enquanto so o horario de partida).
+model Settings {
+  id            Int     @id @default(1)
+  /// "HH:MM" (24h), usado pra calcular ETA por parada. Null = sem ETA.
+  departureTime String?
+
+  @@map("settings")
+}
+
+/// Uma viagem CONFIRMADA (nao todo clique em "Otimizar" — so quando o usuario
+/// explicitamente clica "Confirmar viagem"). E o que alimenta o dashboard de
+/// relatorios e a tela de confirmacao de embarque. Guarda uma FOTO dos dados
+/// no momento da confirmacao (nome do motorista, distancia, etc.) — nao
+/// referencia Route/Location por FK forte, pra nao quebrar/sumir se a rota ou
+/// localizacao for editada/excluida depois.
+model Trip {
+  id        String      @id
+  /// "YYYY-MM-DD"
+  date      String
+  createdAt DateTime    @default(now())
+  routes    TripRoute[]
+
+  @@map("trips")
+}
+
+model TripRoute {
+  id      String @id
+  tripId  String
+  trip    Trip   @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  /// Id da rota original no momento da confirmacao — so referencia solta, sem FK (a rota pode ser editada/excluida depois sem afetar o historico).
+  routeId String?
+  routeName        String
+  driverName       String?
+  driverPhone      String?
+  vehiclePlate     String?
+  vehicleTypeLabel String?
+  depotLat            Float
+  depotLng            Float
+  destinationLat      Float?
+  destinationLng      Float?
+  destinationName     String?
+  capacity            Int
+  totalDistanceMeters Float
+  totalDurationSeconds Float
+  estimatedCost       Float?
+  mapsUrl             String?
+  stops TripStop[]
+
+  @@map("trip_routes")
+}
+
+model TripStop {
+  id          String    @id
+  tripRouteId String
+  tripRoute   TripRoute @relation(fields: [tripRouteId], references: [id], onDelete: Cascade)
+  /// Id da localizacao original — so referencia solta, sem FK (idem TripRoute.routeId).
+  locationId String?
+  name       String
+  lat        Float
+  lng        Float
+  demand     Int
+  /// posicao de visita, 1-based
+  order      Int
+  etaSeconds Int?
+  /// null = ainda nao marcado, true = embarcou, false = nao embarcou (no-show)
+  boarded    Boolean?
+
+  @@map("trip_stops")
+}
