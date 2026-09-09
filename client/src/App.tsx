@@ -105,7 +105,9 @@ export default function App() {
 
         <main className="main">
           <StatsStrip />
-          <MapView />
+          <div className="map-area">
+            <MapView />
+          </div>
         </main>
       </div>
     </AppStateProvider>
