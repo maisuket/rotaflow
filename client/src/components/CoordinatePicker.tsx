@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Autocomplete } from "@react-google-maps/api";
 import { useAppState, PickTarget } from "../context/AppState";
 import { api } from "../api/client";
 
@@ -12,12 +13,18 @@ interface CoordinatePickerProps {
 
 /**
  * Bloco reutilizavel de escolha de coordenadas: botao "Selecionar no mapa"
- * (delega ao MapView via pickMode/pickedResult do AppState), busca por
- * CEP/Rua/Bairro (geocodificacao no backend), e os proprios campos lat/lng.
+ * (delega ao MapView via pickMode/pickedResult do AppState), busca de
+ * endereco com autocomplete (Google Places, resolve lat/lng no proprio
+ * navegador — mais rapido e sem chamar o backend) com fallback pra
+ * CEP/Rua/Bairro via geocodificacao no backend quando a chave do cliente
+ * nao esta configurada/carregada, e os proprios campos lat/lng.
  * Usado em LocationForm, RouteForm (origem) e DestinationForm (destino global).
  */
 export function CoordinatePicker({ target, lat, lng, onChange }: CoordinatePickerProps) {
-  const { pickMode, setPickMode, pickedResult, setPickedResult } = useAppState();
+  const { pickMode, setPickMode, pickedResult, setPickedResult, googleMapsClientStatus } =
+    useAppState();
+  const [autocomplete, setAutocomplete] = useState<google.maps.places.Autocomplete | null>(null);
+  const [addressQuery, setAddressQuery] = useState("");
   const [cep, setCep] = useState("");
   const [rua, setRua] = useState("");
   const [bairro, setBairro] = useState("");
@@ -33,6 +40,19 @@ export function CoordinatePicker({ target, lat, lng, onChange }: CoordinatePicke
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pickedResult]);
+
+  const handlePlaceChanged = () => {
+    if (!autocomplete) return;
+    const place = autocomplete.getPlace();
+    const location = place.geometry?.location;
+    if (!location) {
+      setGeocodeError("Selecione um endereço da lista de sugestões.");
+      return;
+    }
+    onChange(String(location.lat()), String(location.lng()));
+    setResolvedAddress(place.formatted_address ?? place.name ?? null);
+    setGeocodeError(null);
+  };
 
   const handleBuscarEndereco = async () => {
     const partes = [rua, bairro, cep].map((p) => p.trim()).filter(Boolean);
@@ -68,37 +88,56 @@ export function CoordinatePicker({ target, lat, lng, onChange }: CoordinatePicke
 
       <div className="subform-box">
         <div className="subform-label">Ou busque por endereço</div>
-        <div className="input-row" style={{ marginBottom: 6 }}>
-          <input
-            className="input"
-            placeholder="CEP"
-            value={cep}
-            onChange={(e) => setCep(e.target.value)}
-          />
-        </div>
-        <div className="input-row" style={{ marginBottom: 6 }}>
-          <input
-            className="input"
-            placeholder="Rua"
-            value={rua}
-            onChange={(e) => setRua(e.target.value)}
-          />
-          <input
-            className="input"
-            placeholder="Bairro"
-            value={bairro}
-            onChange={(e) => setBairro(e.target.value)}
-          />
-        </div>
-        <button
-          type="button"
-          className="btn btn-secondary btn-sm btn-block"
-          onClick={handleBuscarEndereco}
-          disabled={geocoding}
-        >
-          {geocoding ? "Buscando…" : "Buscar endereço"}
-        </button>
-        {resolvedAddress && <div className="alert alert-success">Encontrado: {resolvedAddress}</div>}
+
+        {googleMapsClientStatus === "ok" ? (
+          <Autocomplete
+            onLoad={setAutocomplete}
+            onPlaceChanged={handlePlaceChanged}
+            options={{ componentRestrictions: { country: "br" }, fields: ["geometry", "formatted_address", "name"] }}
+          >
+            <input
+              className="input"
+              placeholder="Digite um endereço, bairro ou ponto de referência"
+              value={addressQuery}
+              onChange={(e) => setAddressQuery(e.target.value)}
+            />
+          </Autocomplete>
+        ) : (
+          <>
+            <div className="input-row" style={{ marginBottom: 6 }}>
+              <input
+                className="input"
+                placeholder="CEP"
+                value={cep}
+                onChange={(e) => setCep(e.target.value)}
+              />
+            </div>
+            <div className="input-row" style={{ marginBottom: 6 }}>
+              <input
+                className="input"
+                placeholder="Rua"
+                value={rua}
+                onChange={(e) => setRua(e.target.value)}
+              />
+              <input
+                className="input"
+                placeholder="Bairro"
+                value={bairro}
+                onChange={(e) => setBairro(e.target.value)}
+              />
+            </div>
+            <button
+              type="button"
+              className="btn btn-secondary btn-sm btn-block"
+              onClick={handleBuscarEndereco}
+              disabled={geocoding}
+            >
+              {geocoding ? "Buscando…" : "Buscar endereço"}
+            </button>
+          </>
+        )}
+
+        {resolvedAddress && <div className="alert alert-success">Selecionado: {resolvedAddress}</div>}
         {geocodeError && <div className="alert alert-error">{geocodeError}</div>}
       </div>
 

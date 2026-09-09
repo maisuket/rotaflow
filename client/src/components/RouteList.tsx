@@ -140,33 +140,37 @@ export function RouteList() {
             <EditRouteForm route={route} onDone={() => setEditingId(null)} />
           </li>
         ) : (
-          <li className="list-item" key={route.id} title={timestampTitle(route)}>
-            <RouteShapeIcon shape={shapeForRouteIndex(index)} color={colorForRouteIndex(index)} />
-            <span className="list-item-main">
-              {route.name}{" "}
-              <span className="list-item-meta">
-                ({route.depotLat.toFixed(4)}, {route.depotLng.toFixed(4)})
+          <li className="list-item list-item-stack" key={route.id} title={timestampTitle(route)}>
+            <div className="list-item-row">
+              <RouteShapeIcon shape={shapeForRouteIndex(index)} color={colorForRouteIndex(index)} />
+              <span className="list-item-main">
+                {route.name}{" "}
+                <span className="list-item-meta">
+                  ({route.depotLat.toFixed(4)}, {route.depotLng.toFixed(4)})
+                </span>
               </span>
-            </span>
-            {route.originMode === "firstPassenger" && (
-              <span className="badge badge-primary">origem: passageiro</span>
-            )}
-            <span className="badge badge-muted">cap. {route.capacity}</span>
-            {route.driverName && <span className="badge badge-muted">🧑‍✈️ {route.driverName}</span>}
-            {route.vehicleTypeLabel && <span className="badge badge-muted">{route.vehicleTypeLabel}</span>}
-            {route.activeWeekdays && route.activeWeekdays.length > 0 && (
-              <span className="badge badge-muted">
-                {route.activeWeekdays.map((d) => ["D", "S", "T", "Q", "Q", "S", "S"][d]).join("")}
-              </span>
-            )}
-            <div className="list-item-actions">
-              <button className="btn btn-secondary btn-sm" onClick={() => setEditingId(route.id)}>
-                Editar
-              </button>
-              <ConfirmButton
-                onConfirm={() => removeRoute(route.id)}
-                confirmText={`Excluir "${route.name}"?`}
-              />
+            </div>
+            <div className="list-item-footer">
+              {route.originMode === "firstPassenger" && (
+                <span className="badge badge-primary">origem: passageiro</span>
+              )}
+              <span className="badge badge-muted">cap. {route.capacity}</span>
+              {route.driverName && <span className="badge badge-muted">🧑‍✈️ {route.driverName}</span>}
+              {route.vehicleTypeLabel && <span className="badge badge-muted">{route.vehicleTypeLabel}</span>}
+              {route.activeWeekdays && route.activeWeekdays.length > 0 && (
+                <span className="badge badge-muted">
+                  {route.activeWeekdays.map((d) => ["D", "S", "T", "Q", "Q", "S", "S"][d]).join("")}
+                </span>
+              )}
+              <div className="list-item-actions">
+                <button className="btn btn-secondary btn-sm" onClick={() => setEditingId(route.id)}>
+                  Editar
+                </button>
+                <ConfirmButton
+                  onConfirm={() => removeRoute(route.id)}
+                  confirmText={`Excluir "${route.name}"?`}
+                />
+              </div>
             </div>
           </li>
         )

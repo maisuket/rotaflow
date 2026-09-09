@@ -7,6 +7,8 @@ import { RouteForm } from "./components/RouteForm";
 import { RouteList } from "./components/RouteList";
 import { OptimizeButton } from "./components/OptimizeButton";
 import { ResultsPanel } from "./components/ResultsPanel";
+import { DestinationForm } from "./components/DestinationForm";
+import { DepartureTimeForm } from "./components/DepartureTimeForm";
 import { MapView } from "./components/MapView";
 import { AutoOptimizePanel } from "./components/AutoOptimizePanel";
 import { SettingsPopover } from "./components/SettingsPopover";
@@ -90,6 +92,12 @@ export default function App() {
 
           {activeTab === "otimizar" && (
             <>
+              <div className="section">
+                <div className="section-title">Opções da otimização</div>
+                <DestinationForm embedded />
+                <hr className="divider" style={{ margin: "12px 0" }} />
+                <DepartureTimeForm embedded />
+              </div>
               <div className="section">
                 <OptimizeButton />
                 <ResultsPanel />

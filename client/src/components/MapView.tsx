@@ -10,6 +10,11 @@ import { formatClock, formatDistance, formatDuration } from "../utils/format";
 const containerStyle = { width: "100%", height: "100%" };
 const DEFAULT_CENTER = { lat: -3.119, lng: -60.0217 }; // Manaus-AM, usado so como fallback
 
+// Array estavel (fora do componente) — @react-google-maps/api avisa/recarrega
+// o script se a referencia de `libraries` mudar a cada render. "places" e o
+// que habilita o <Autocomplete> usado no CoordinatePicker.
+const MAP_LIBRARIES: "places"[] = ["places"];
+
 // Icone customizado (quadrado) para diferenciar o marcador de DESTINO do de ORIGEM (circulo).
 const DESTINATION_SQUARE_PATH = "M -7,-7 7,-7 7,7 -7,7 z";
 // Estrela para o destino GLOBAL (compartilhado por todas as rotas).
@@ -48,6 +53,7 @@ export function MapView() {
   const hasClientKey = Boolean(import.meta.env.VITE_GOOGLE_MAPS_JS_KEY);
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_JS_KEY ?? "",
+    libraries: MAP_LIBRARIES,
   });
 
   useEffect(() => {

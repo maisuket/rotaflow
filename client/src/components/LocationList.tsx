@@ -76,32 +76,36 @@ export function LocationList() {
       ) : (
         <ul className="list" style={{ marginTop: 10 }}>
           {filtered.map((loc) => (
-            <li className="list-item" key={loc.id} title={timestampTitle(loc)}>
-              <span className="list-item-main">
-                {loc.name}{" "}
-                <span className="list-item-meta">
-                  ({loc.lat.toFixed(4)}, {loc.lng.toFixed(4)})
+            <li className="list-item list-item-stack" key={loc.id} title={timestampTitle(loc)}>
+              <div className="list-item-row">
+                <span className="list-item-main">
+                  {loc.name}{" "}
+                  <span className="list-item-meta">
+                    ({loc.lat.toFixed(4)}, {loc.lng.toFixed(4)})
+                  </span>
                 </span>
-              </span>
-              <span className="badge badge-muted">{loc.demand} pax</span>
-              <select
-                className="input"
-                title="Travar posição da parada dentro da rota"
-                style={{ maxWidth: 108, fontSize: 12, padding: "2px 4px" }}
-                value={lockedPositions[loc.id] ?? ""}
-                onChange={(e) =>
-                  setLockPosition(loc.id, (e.target.value || null) as LockPosition | null)
-                }
-              >
-                <option value="">Sem trava</option>
-                <option value="first">🔒 Primeira</option>
-                <option value="last">🔒 Última</option>
-              </select>
-              <div className="list-item-actions">
-                <ConfirmButton
-                  onConfirm={() => removeLocation(loc.id)}
-                  confirmText={`Excluir "${loc.name}"?`}
-                />
+              </div>
+              <div className="list-item-footer">
+                <span className="badge badge-muted">{loc.demand} pax</span>
+                <select
+                  className="input"
+                  title="Travar posição da parada dentro da rota"
+                  style={{ maxWidth: 108, fontSize: 12, padding: "2px 4px" }}
+                  value={lockedPositions[loc.id] ?? ""}
+                  onChange={(e) =>
+                    setLockPosition(loc.id, (e.target.value || null) as LockPosition | null)
+                  }
+                >
+                  <option value="">Sem trava</option>
+                  <option value="first">🔒 Primeira</option>
+                  <option value="last">🔒 Última</option>
+                </select>
+                <div className="list-item-actions">
+                  <ConfirmButton
+                    onConfirm={() => removeLocation(loc.id)}
+                    confirmText={`Excluir "${loc.name}"?`}
+                  />
+                </div>
               </div>
             </li>
           ))}

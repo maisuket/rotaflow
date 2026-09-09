@@ -536,6 +536,15 @@ button {
   background: #fde3e3;
 }
 
+.btn-success {
+  background: var(--color-success);
+  color: #fff;
+  border-color: var(--color-success);
+}
+.btn-success:hover:not(:disabled) {
+  background: #116430;
+}
+
 .btn-ghost {
   background: transparent;
   color: var(--color-text-muted);
@@ -602,6 +611,34 @@ button {
   display: flex;
   gap: 6px;
   flex-shrink: 0;
+}
+
+/* Variante empilhada: nome/icone numa linha propria, badges e acoes numa
+   segunda linha — evita o nome colidir com badges quando o nome quebra
+   (usada em RouteList/LocationList; o .list-item "simples" de uma linha so,
+   como em GoogleDiagnosticsPanel, continua igual). */
+.list-item-stack {
+  flex-direction: column;
+  align-items: stretch;
+  flex-wrap: nowrap;
+}
+
+.list-item-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.list-item-footer {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.list-item-footer .list-item-actions {
+  margin-left: auto;
 }
 
 /* ---------- badges / dots ---------- */

@@ -78,7 +78,7 @@ export function ResultsPanel() {
       )}
 
       <button
-        className="btn btn-secondary btn-block"
+        className="btn btn-success btn-block"
         style={{ marginBottom: 10 }}
         onClick={handleConfirmTrip}
         disabled={confirming || loading}

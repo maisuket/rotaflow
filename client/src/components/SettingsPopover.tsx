@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { GoogleDiagnosticsPanel } from "./GoogleDiagnosticsPanel";
-import { DestinationForm } from "./DestinationForm";
-import { DepartureTimeForm } from "./DepartureTimeForm";
 
 /**
- * Icone de engrenagem no cabecalho — abre um popover com as configuracoes
- * globais que se aplicam a toda otimizacao (destino compartilhado, horario
- * de partida) e o diagnostico do Google Maps. Coisas que se configura uma
- * vez e raramente revisita, por isso ficam fora das abas principais.
+ * Icone de engrenagem no cabecalho — abre o diagnostico do Google Maps, uma
+ * checagem tecnica que se olha raramente (nao um fluxo do dia a dia). Destino
+ * compartilhado e horario de partida moraram aqui antes, mas afetam
+ * diretamente o resultado da proxima otimizacao — foram pra dentro da aba
+ * Otimizar, perto do botao que eles influenciam, em vez de escondidos atras
+ * da engrenagem.
  */
 export function SettingsPopover() {
   const [open, setOpen] = useState(false);
@@ -34,13 +34,7 @@ export function SettingsPopover() {
       </button>
       {open && (
         <div className="settings-popover">
-          <div className="section-title" style={{ marginBottom: 10 }}>Configurações</div>
-
-          <DestinationForm embedded />
-          <hr className="divider" style={{ margin: "12px 0" }} />
-          <DepartureTimeForm embedded />
-          <hr className="divider" style={{ margin: "12px 0" }} />
-          <div className="subform-label">Diagnóstico do Google Maps</div>
+          <div className="section-title" style={{ marginBottom: 10 }}>Diagnóstico do Google Maps</div>
           <GoogleDiagnosticsPanel embedded />
         </div>
       )}
